@@ -5,37 +5,9 @@ if (!empty($_GET['location'])){
     $maps_array = json_decode($maps_json,true);
     $lat = $maps_array['results']['0']['geometry']['location']['lat'];
     $lng = $maps_array['results']['0']['geometry']['location']['lng'];
-    
-    
     $timestamp = time();
-    
-    
-    $ip     = $_SERVER['REMOTE_ADDR']; // means we got user's IP address 
-    var_dump('ip: ',$ip);
-    $json   = file_get_contents( 'http://smart-ip.net/geoip-json/' . $ip); // this one service we gonna use to obtain timezone by IP
-    // maybe it's good to add some checks (if/else you've got an answer and if json could be decoded, etc.)
-    $ipData = json_decode( $json, true);
-    
-    if ($ipData['timezone']) {
-            $tz = new DateTimeZone( $ipData['timezone']);
-            var_dump($tz);
-            $now = new DateTime( 'now', $tz); // DateTime object corellated to user's timezone
-            var_dump($now);
-        } 
-    else {
-          var_dump('PULA');
-        }
-        
-    $returnType = 'php';
-    $timezone = 'Bucharest';
-    $requestUri = sprintf('http://www.convert-unix-time.com/api?timestamp=%s&timezone=%s&returnType=%s',
-    $timestamp, $timezone, $returnType);
-
-    $response = file_get_contents($requestUri);
-    $result = unserialize($response);
-    var_dump($result);
-    
-    $instagram_url = 'https://api.instagram.com/v1/media/search?lat='.$lat.'&lng='.$lng.'&access_token=1716833421.1677ed0.3838856823c04fa78d741ef681ccc152'.'&max_timestamp='.$timestamp;
+    //var_dump($timestamp);
+    $instagram_url = 'https://api.instagram.com/v1/media/search?lat='.$lat.'&lng='.$lng.'&access_token=1716833421.1677ed0.3838856823c04fa78d741ef681ccc152'.'&max_timestamp=';//.$timestamp;
     $instagram_json = file_get_contents($instagram_url);
     $instagram_array = json_decode($instagram_json,true);
     
@@ -48,24 +20,89 @@ if (!empty($_GET['location'])){
 
 
 
-
-
-
-
-
-
-
-
 <html lang="en">
 <head>
+    
     <meta charset="utf-8"/>
-    <title>geogram</title>
+    <title>InstaCity</title>
+    <script>
+    function setCookie(cname,cvalue,exdays) {
+        var d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        var expires = "expires=" + d.toGMTString();
+        document.cookie = cname+"="+cvalue+"; "+expires;
+    }
+    
+    function getCookie(cname) {
+        var name = cname + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0; i<ca.length; i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1);
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return ""; 
+    }
+    
+    function checkCookie() {
+         var index;
+         var test = 'mangalia';
+         var text = "<ul>";
+        var fruits = ["Banana", "Orange", "Apple", "Mango"];
+        var user=getCookie("username");
+        if (user != "") {
+           for (index = 0; index < fruits.length; index++) {
+             text += "<li>" + fruits[index] + "</li>";
+             }
+            text += "</ul>";
+            document.getElementById("demo").innerHTML = text;
+        } 
+        else {
+           var javascriptvar = document.getElementById('location').value;
+           user = javascriptvar;//verifica locatia
+           
+        }
+           //arata locatia -> echo location;
+         if (user == test) {
+               setCookie("username", user, 30);
+               
+           }
+        
+        
+    }
+    
+
+function myFunction() {
+    var index;
+    var text = "<ul>";
+    var fruits = ["Banana", "Orange", "Apple", "Mango"];
+    for (index = 0; index < fruits.length; index++) {
+        text += "<li>" + fruits[index] + "</li>";
+    }
+    text += "</ul>";
+    document.getElementById("demo").innerHTML = text;
+    $("#buton").onclick(function(){
+        var text = $("#textarea").text();
+        $("#ul_tau").append("<li>" + text + "</li>");
+    });
+}
+</script>
+    
+    
 </head>
-<body>
+<body onload="checkCookie()"> 
+<p id="demo"></p>
 <form action="">
+    <br><br><br>
+    <div style="height:233px;margin-top:89px">
+    <center><h1>InstaCity:</h1>
     <input type="text" name="location"/>
-    <button type="submit">submit</button>
-    <br/>
+    <br><br>
+    <button id="buton" type="submit">submit</button>
+    
+    <br/><br/>
     <?php
     if(!empty($instagram_array)){
     foreach ($instagram_array['data'] as $image){
@@ -74,8 +111,15 @@ if (!empty($_GET['location'])){
         alt=""/>';
     }
     }
+    else
+    {
+        echo "*type desired city and get latest instagram photos from location";
+    }
     ?>
+    </center>
 </form>
 
+
+    
 </body>
 </html>
