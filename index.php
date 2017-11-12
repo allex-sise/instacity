@@ -7,7 +7,7 @@ if (!empty($_GET['location'])){
     $lng = $maps_array['results']['0']['geometry']['location']['lng'];
     $timestamp = time();
     //var_dump($timestamp);
-    $instagram_url = 'https://api.instagram.com/v1/media/search?lat='.$lat.'&lng='.$lng.'&access_token=1716833421.1677ed0.3838856823c04fa78d741ef681ccc152'.'&max_timestamp=';//.$timestamp;
+    $instagram_url = 'https://api.instagram.com/v1/media/search?lat='.$lat.'&lng='.$lng.'&access_token=xxxx'.'&max_timestamp=';//.$timestamp;
     $instagram_json = file_get_contents($instagram_url);
     $instagram_array = json_decode($instagram_json,true);
     
